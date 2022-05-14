@@ -1,4 +1,5 @@
 #include "common.h"
+#include "f_server.h"
 
 #include <stdio.h>
 #include <stdlib.h>
