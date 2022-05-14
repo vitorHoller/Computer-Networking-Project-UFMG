@@ -54,10 +54,9 @@ int verify_existing_sensors(equipment equipments[4])
 {
     return 0;
 }
-void add_handle(char aux[BUFSZ], equipment equipments[4])
+void handle_add(char aux[BUFSZ], equipment equipments[4])
 {
     char buffer[BUFSZ];
-    char buf[BUFSZ];
     char sensors[BUFSZ];
     char equip[BUFSZ];
 
@@ -132,7 +131,7 @@ void handle_buffer(char buf[BUFSZ])
 
     if (strncmp("add", buf, 3) == 0)
     {                                // if buf has a substring "add" in its first 3 characters
-        add_handle(aux, equipments); // pass a _copy_ of buf to the function
+        handle_add(aux, equipments); // pass a _copy_ of buf to the function
         strncpy(buf, aux, strlen(aux));
     }
     else if (strncmp("remove", buf, 6) == 0)
