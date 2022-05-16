@@ -12,6 +12,7 @@
 #define PRESSAO_ID 02
 #define VELOCIDADE_ID 03
 #define CORRENTE_ID 04
+#define EQUIP_SIZE 4
 
 typedef struct sensor
 {
@@ -50,88 +51,207 @@ typedef struct equipment
 //     empilhadeira.sensor_array[i].id = 00;
 // }
 
-int verify_existing_sensors(equipment equipments[4])
+int verify_existing_sensors(equipment *equipments, unsigned int n)
 {
     return 0;
 }
-void handle_add(char aux[BUFSZ], equipment equipments[4])
+
+void add(char sensors[BUFSZ], char equip[BUFSZ], char aux[BUFSZ], equipment *equipments, unsigned int n) // equipments precisa ser passado como referencia
+{
+    char sensor_buffer[BUFSZ];
+    memset(sensor_buffer, 0, BUFSZ);
+    char equip_buffer[BUFSZ];
+    memset(equip_buffer, 0, BUFSZ);
+    char *ptr[BUFSZ];
+    *ptr = NULL;
+    char ptr_aux[BUFSZ];
+    memset(ptr_aux, 0, BUFSZ);
+    int sensor_id[4] = {0, 0, 0, 0};
+    int equip_id;
+    int index;
+    int max;
+    int int_aux[4] = {0, 0, 0, 0};
+
+    switch (strlen(sensors)) // delimit how many sensors will be added
+    {
+    case 11: // a string "01 02 03 04" has a length of 11
+        max = 3;
+        break;
+    case 8: // a string "01 02 03" has a length of 8
+        max = 2;
+        break;
+    case 5: // a string "01 02" has a length of 5
+        max = 1;
+        break;
+    case 2: // a string "014" has a length of 2
+        max = 0;
+        break;
+    }
+
+    while (strlen(sensors) <= 11 && strlen(sensors) > 0)
+    {
+        strcpy(sensor_buffer, strrchr(sensors, '0')); // copy the last two digits of sensors into sensor_buffer
+        strcpy(equip_buffer, strrchr(equip, '0'));    // eliminate the substring " " in the first character of equip_buffer
+        if (strlen(sensors) == 2)
+        {
+            strncpy(ptr_aux, sensors, strlen(sensors) - 2); // eliminate the two digits that have been already copied to sensor_buffer
+            index = 0;
+        }
+        else
+        {
+            strncpy(ptr_aux, sensors, strlen(sensors) - 3); // eliminate the two digits and the backspace that have been already copied to sensor_buffer
+            switch (strlen(sensors))                        // order the array position to be added in the database
+            {
+            case 11: // the last character, "04", of the string with lenght = 11, "01 02 03 04" will be added after "01" "02" "03"
+                index = 3;
+                break;
+            case 8: // the last character, "03", of the string with lenght = 11, "01 02 03" will be added after "01" "02"
+                index = 2;
+                break;
+            case 5: // the last character, "02", of the string with lenght = 11, "01 02" will be added after "01"
+                index = 1;
+                break;
+            }
+        }
+        strcpy(sensors, ptr_aux); // refresh the string sensor without the characters removed in line 14 lines above
+        memset(ptr_aux, 0, BUFSZ);
+
+        sensor_id[index] = strtol(sensor_buffer, ptr, 10); // convert sensor_buffer to integer
+        *ptr = NULL;
+        equip_id = strtol(equip_buffer, ptr, 10); // convert equip_buffer to integer
+        *ptr = NULL;
+    }
+    for (int i = 0; i <= max; i++)
+    {
+        switch (sensor_id[i])
+        {
+        case TEMPERATURA_ID:
+            for (int i = 0, j = 0; i < EQUIP_SIZE; i++) // will run all the equipments' array
+            {
+                if (equipments[equip_id - 1].sensor_array[i].id == EMPTY_ID) // get the first position of equipments' array that is empty
+                {
+                    int_aux[j] = i; // save the first position
+                    j++;
+                }
+                else if (equipments[equip_id - 1].sensor_array[i].id == TEMPERATURA_ID) // verify if the sensor_id alrealdy exist in the equipments' array
+                {
+                    sprintf(aux, "sensor 0%d already exists in 0%d", TEMPERATURA_ID, equip_id);
+                    return;
+                }
+            }
+            equipments[equip_id - 1].sensor_array[int_aux[0]].id = TEMPERATURA_ID; // save the sensor_id in the first empty position of the array
+            break;
+
+        case PRESSAO_ID:
+            for (int i = 0, j = 0; i < 4; i++) // will run all the equipments' array
+            {
+                if (equipments[equip_id - 1].sensor_array[i].id == EMPTY_ID) // get the first position of equipments' array that is empty
+                {
+                    int_aux[j] = i; // save the first position
+                    j++;
+                }
+                else if (equipments[equip_id - 1].sensor_array[i].id == PRESSAO_ID) // verify if the sensor_id alrealdy exist in the equipments' array
+                {
+                    sprintf(aux, "sensor 0%d already exists in 0%d", PRESSAO_ID, equip_id);
+                    return;
+                }
+            }
+            equipments[equip_id - 1].sensor_array[int_aux[0]].id = PRESSAO_ID; // save the sensor_id in the first empty position of the array
+            break;
+
+        case VELOCIDADE_ID:
+            for (int i = 0, j = 0; i < 4; i++) // will run all the equipments' array
+            {
+                if (equipments[equip_id - 1].sensor_array[i].id == EMPTY_ID) // get the first position of equipments' array that is empty
+                {
+                    int_aux[j] = i; // save the first position
+                    j++;
+                }
+                else if (equipments[equip_id - 1].sensor_array[i].id == VELOCIDADE_ID) // verify if the sensor_id alrealdy exist in the equipments' array
+                {
+                    sprintf(aux, "sensor 0%d already exists in 0%d", VELOCIDADE_ID, equip_id);
+                    return;
+                }
+            }
+            equipments[equip_id - 1].sensor_array[int_aux[0]].id = VELOCIDADE_ID; // save the sensor_id in the first empty position of the array
+            break;
+
+        case CORRENTE_ID:
+            for (int i = 0, j = 0; i < 4; i++) // will run all the equipments' array
+            {
+                if (equipments[equip_id - 1].sensor_array[i].id == EMPTY_ID) // get the first position of equipments' array that is empty
+                {
+                    int_aux[j] = i; // save the first position
+                    j++;
+                }
+                else if (equipments[equip_id - 1].sensor_array[i].id == CORRENTE_ID) // verify if the sensor_id alrealdy exist in the equipments' array
+                {
+                    sprintf(aux, "sensor 0%d already exists in 0%d", CORRENTE_ID, equip_id);
+                    return;
+                }
+            }
+            equipments[equip_id - 1].sensor_array[int_aux[0]].id = CORRENTE_ID; // save the sensor_id in the first empty position of the array
+            break;
+
+        default:
+            break;
+        }
+    }
+
+    memset(aux, 0, BUFSZ);
+
+    if (max == 3) // print schema for each number of sensors added (1, 2, 3 or 4)
+    {
+        sprintf(aux, "sensor 0%d 0%d 0%d 0%d added", sensor_id[0], sensor_id[1], sensor_id[2], sensor_id[3]);
+        return;
+    }
+    else if (max == 2)
+    {
+        sprintf(aux, "sensor 0%d 0%d 0%d added", sensor_id[0], sensor_id[1], sensor_id[2]);
+        return;
+    }
+    else if (max == 1)
+    {
+        sprintf(aux, "sensor 0%d 0%d added", sensor_id[0], sensor_id[1]);
+        return;
+    }
+    else if (max == 0)
+    {
+        sprintf(aux, "sensor 0%d added", sensor_id[0]);
+        return;
+    }
+}
+
+void handle_add(char aux[BUFSZ], equipment *equipments, unsigned int n)
 {
     char buffer[BUFSZ];
     char sensors[BUFSZ];
     char equip[BUFSZ];
+    memset(buffer, 0, BUFSZ);
+    memset(sensors, 0, BUFSZ);
+    memset(equip, 0, BUFSZ);
 
-    if (verify_existing_sensors(equipments) == 0)
-    {                                                                                // if the sum of sensors in each equipment is more than 15, the server returns "limit excedeed" to the client
+    if (verify_existing_sensors(equipments, EQUIP_SIZE) == 0) // if the sum of sensors in each equipment is more than 15, the server returns "limit excedeed" to the client
+    {
+
         strcpy(buffer, strrchr(aux, 'r'));                                           // eliminate the substring "add sensor" and then copies the rest of string into buffer
         strcpy(buffer, strchr(buffer, '0'));                                         // eliminate the substring " " in the first character of buffer
-        strncpy(sensors, buffer, strlen(buffer) - strlen(strrchr(buffer, 'i')) - 1); // sensors id that the client want to be added
+        strncpy(sensors, buffer, strlen(buffer) - strlen(strrchr(buffer, 'i') - 1)); // sensors id that the client want to be added
         strcpy(equip, strrchr(buffer, '0'));                                         // equipments id that the client want to be added
-        // add(sensors, equip, aux, equipments);
+        add(sensors, equip, aux, equipments, EQUIP_SIZE);                            // will add the sensors in its respectives equipments
     }
 }
 
-// void add(char sensors[BUFSZ], char equip[BUFSZ], char aux[BUFSZ], equipment equipments[4])
-// {
-//     char sensor_buffer[BUFSZ];
-//     char equip_buffer[BUFSZ];
-//     char *ptr;
-//     int sensor_id;
-//     int equip_id;
-
-//     while (strlen(sensors) <= 6 && strlen(sensors) > 0)
-//     {
-//         strcpy(sensor_buffer, strrchr(sensors, '0'));
-//         strcpy(equip_buffer, strrchr(equip, '0'));
-//         strncpy(sensors, sensors, strlen(sensors) - 2);
-//         sensor_id = strtol(sensor_buffer, ptr, 10);
-//         equip_id = strtol(equip_buffer, ptr, 10);
-//         switch (sensor_id)
-//         {
-//         case 01:
-//             if (equipments[equip_id].sensor_array[0].id != TEMPERATURA_ID){
-//                 equipments[equip_id].sensor_array[0].id = TEMPERATURA_ID;
-//                 break;
-//             } else {
-//                 sprintf(aux, "sensor %d already exists in %d", TEMPERATURA_ID, equip_id);
-//                 return;
-//             }
-//         case 02:
-//             if (equipments[equip_id].sensor_array[0].id != TEMPERATURA_ID)
-//                 break;
-//         case 03:
-//             if (equipments[equip_id].sensor_array[0].id != TEMPERATURA_ID)
-//                 break;
-//         case 04:
-//             if (equipments[equip_id].sensor_array[0].id != TEMPERATURA_ID)
-//                 break;
-//         default:
-//             break;
-//         }
-//     }
-// }
-
-void handle_buffer(char buf[BUFSZ])
+void handle_buffer(char buf[BUFSZ], equipment *equipments, unsigned int n)
 {
-    equipment equipments[4];
-    equipments[0].id = ESTEIRA_ID;
-    equipments[1].id = GUINDASTE_ID;
-    equipments[2].id = PONTE_ROLANTE_ID;
-    equipments[3].id = EMPILHADEIRA_ID;
-    for (int i = 0; i < 4; i++)
-    {
-        for (int j = 0; j < 4; j++)
-        {
-            equipments[i].sensor_array[j].id = EMPTY_ID;
-        }
-    }
-
     char aux[BUFSZ];
     memset(aux, 0, BUFSZ);
     strncpy(aux, buf, strlen(buf));
 
     if (strncmp("add", buf, 3) == 0)
-    {                                // if buf has a substring "add" in its first 3 characters
-        handle_add(aux, equipments); // pass a _copy_ of buf to the function
+    {                                            // if buf has a substring "add" in its first 3 characters
+        handle_add(aux, equipments, EQUIP_SIZE); // pass a _copy_ of buf to the function
+        memset(buf, 0, BUFSZ);
         strncpy(buf, aux, strlen(aux));
     }
     else if (strncmp("remove", buf, 6) == 0)
