@@ -273,6 +273,53 @@ void _remove(char sensors[BUFSZ], char equip[BUFSZ], char aux[BUFSZ], equipment 
     }
 }
 
+void list(char equip[BUFSZ], char aux[BUFSZ], equipment *equipments, unsigned int n)
+{
+    int equip_id;
+    int sensor_id[SENSOR_SIZE] = {0,0,0,0};
+    int j = 0;
+    char *ptr[BUFSZ];
+    *ptr = NULL;
+    equip_id = strtol(equip, ptr, 10); // convert equip_buffer to integer
+    *ptr = NULL;
+
+    for (int i = 0; i < SENSOR_SIZE; i++)
+    {
+        if (equipments[equip_id - 1].sensor_array[i].id != EMPTY_ID) // find all sensors that were added in equipments
+        {
+            sensor_id[j] = equipments[equip_id - 1].sensor_array[i].id; // organize them in a array
+            j++;
+        }
+    }
+
+    memset(aux, 0, BUFSZ);
+
+    if (j == 4) // print schema for each number of sensors that will be listed (1, 2, 3 or 4)
+    {
+        sprintf(aux, "0%d 0%d 0%d 0%d", sensor_id[0], sensor_id[1], sensor_id[2], sensor_id[3]);
+        return;
+    }
+    else if (j == 3)
+    {
+        sprintf(aux, "0%d 0%d 0%d", sensor_id[0], sensor_id[1], sensor_id[2]);
+        return;
+    }
+    else if (j == 2)
+    {
+        sprintf(aux, "0%d 0%d", sensor_id[0], sensor_id[1]);
+        return;
+    }
+    else if (j == 1)
+    {
+        sprintf(aux, "0%d", sensor_id[0]);
+        return;
+    }
+    else if(j == 0){
+        sprintf(aux, "none");
+        return;
+    }
+}
+
 void handle_add(char aux[BUFSZ], equipment *equipments, unsigned int n)
 {
     char buffer[BUFSZ];
@@ -311,6 +358,15 @@ void handle_remove(char aux[BUFSZ], equipment *equipments, unsigned int n)
     strncpy(sensors, buffer, strlen(buffer) - strlen(strrchr(buffer, 'i') - 1)); // sensor id that the client want to remove
     strcpy(equip, strrchr(buffer, '0'));                                         // equipments id that the client want to remove
     _remove(sensors, equip, aux, equipments, EQUIP_SIZE);                        // will add the sensors in its respectives equipments
+}
+
+void handle_list(char aux[BUFSZ], equipment *equipments, unsigned int n)
+{
+    char equip[BUFSZ];
+    memset(equip, 0, BUFSZ);
+
+    strcpy(equip, strchr(aux, '0')); // eliminate the substring "list sensors in "
+    list(equip, aux, equipments, EQUIP_SIZE);
 }
 
 
