@@ -239,6 +239,40 @@ void add(char sensors[BUFSZ], char equip[BUFSZ], char aux[BUFSZ], equipment *equ
     }
 }
 
+void _remove(char sensors[BUFSZ], char equip[BUFSZ], char aux[BUFSZ], equipment *equipments, unsigned int n)
+{
+    char sensor_buffer[BUFSZ];
+    memset(sensor_buffer, 0, BUFSZ);
+    char equip_buffer[BUFSZ];
+    memset(equip_buffer, 0, BUFSZ);
+    char *ptr[BUFSZ];
+    *ptr = NULL;
+    int sensor_id;
+    int equip_id;
+
+    strcpy(sensor_buffer, strrchr(sensors, '0')); // copy the last two digits of sensors into sensor_buffer
+    strcpy(equip_buffer, strrchr(equip, '0'));    // eliminate the substring " " in the first character of equip_buffer
+
+    sensor_id = strtol(sensor_buffer, ptr, 10); // convert sensor_buffer to integer
+    *ptr = NULL;
+    equip_id = strtol(equip_buffer, ptr, 10); // convert equip_buffer to integer
+    *ptr = NULL;
+
+    for (int i = 0; i < SENSOR_SIZE; i++) // run all the array and verifies if there is any sensor in the respective equipment
+    {
+        if (equipments[equip_id - 1].sensor_array[i].id == sensor_id) // if there is, the sensor will be removed from the database
+        {
+            equipments[equip_id - 1].sensor_array[i].id = EMPTY_ID;
+            memset(aux, 0, BUFSZ);
+            sprintf(aux, "sensor 0%d removed", sensor_id);
+            return;
+        }
+        memset(aux, 0, BUFSZ);
+        sprintf(aux, "sensor 0%d does not exist in 0%d", sensor_id, equip_id); // if there isn't, this message will appear
+        return;
+    }
+}
+
 void handle_add(char aux[BUFSZ], equipment *equipments, unsigned int n)
 {
     char buffer[BUFSZ];
@@ -253,14 +287,32 @@ void handle_add(char aux[BUFSZ], equipment *equipments, unsigned int n)
 
         strcpy(buffer, strrchr(aux, 'r'));                                           // eliminate the substring "add sensor" and then copies the rest of string into buffer
         strcpy(buffer, strchr(buffer, '0'));                                         // eliminate the substring " " in the first character of buffer
-        strncpy(sensors, buffer, strlen(buffer) - strlen(strrchr(buffer, 'i') - 1)); // sensors id that the client want to be added
-        strcpy(equip, strrchr(buffer, '0'));                                         // equipments id that the client want to be added
+        strncpy(sensors, buffer, strlen(buffer) - strlen(strrchr(buffer, 'i') - 1)); // sensors id that the client want to add
+        strcpy(equip, strrchr(buffer, '0'));                                         // equipments id that the client want to add
         add(sensors, equip, aux, equipments, EQUIP_SIZE);                            // will add the sensors in its respectives equipments
     }
-    else{
+    else
+    {
         sprintf(aux, "limit exceeded");
     }
 }
+
+void handle_remove(char aux[BUFSZ], equipment *equipments, unsigned int n)
+{
+    char buffer[BUFSZ];
+    char sensors[BUFSZ];
+    char equip[BUFSZ];
+    memset(buffer, 0, BUFSZ);
+    memset(sensors, 0, BUFSZ);
+    memset(equip, 0, BUFSZ);
+
+    strcpy(buffer, strrchr(aux, 'r'));                                           // eliminate the substring "remove sensor" and then copies the rest of string into buffer
+    strcpy(buffer, strchr(buffer, '0'));                                         // eliminate the substring " " in the first character of buffer
+    strncpy(sensors, buffer, strlen(buffer) - strlen(strrchr(buffer, 'i') - 1)); // sensor id that the client want to remove
+    strcpy(equip, strrchr(buffer, '0'));                                         // equipments id that the client want to remove
+    _remove(sensors, equip, aux, equipments, EQUIP_SIZE);                        // will add the sensors in its respectives equipments
+}
+
 
 void handle_buffer(char buf[BUFSZ], equipment *equipments, unsigned int n)
 {
@@ -275,18 +327,21 @@ void handle_buffer(char buf[BUFSZ], equipment *equipments, unsigned int n)
         strncpy(buf, aux, strlen(aux));
     }
     else if (strncmp("remove", buf, 6) == 0)
-    { // if buf has a substring "remove" in its first 6 characters
-        // remove(aux); // pass a _copy_ of buf to the function
+    {                                               // if buf has a substring "remove" in its first 6 characters
+        handle_remove(aux, equipments, EQUIP_SIZE); // pass a _copy_ of buf to the function
+        memset(buf, 0, BUFSZ);
         strncpy(buf, aux, strlen(aux));
     }
     else if (strncmp("list", buf, 4) == 0)
-    { // if buf has a substring "list" in its first 3 characters
-        // list(aux); // pass a _copy_ of buf to the function
+    {                                             // if buf has a substring "list" in its first 3 characters
+       // handle_list(aux, equipments, EQUIP_SIZE); // pass a _copy_ of buf to the function
+        memset(buf, 0, BUFSZ);
         strncpy(buf, aux, strlen(aux));
     }
     else if (strncmp("read", buf, 4) == 0)
     { // if buf has a substring "read" in its first 3 characters
         // read(aux); // pass a _copy_ of buf to the function
+        memset(buf, 0, BUFSZ);
         strncpy(buf, aux, strlen(aux));
     }
     else
