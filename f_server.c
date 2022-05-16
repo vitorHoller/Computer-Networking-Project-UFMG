@@ -390,7 +390,7 @@ void handle_buffer(char buf[BUFSZ], equipment *equipments, unsigned int n)
     }
     else if (strncmp("list", buf, 4) == 0)
     {                                             // if buf has a substring "list" in its first 3 characters
-       // handle_list(aux, equipments, EQUIP_SIZE); // pass a _copy_ of buf to the function
+       handle_list(aux, equipments, EQUIP_SIZE); // pass a _copy_ of buf to the function
         memset(buf, 0, BUFSZ);
         strncpy(buf, aux, strlen(aux));
     }
