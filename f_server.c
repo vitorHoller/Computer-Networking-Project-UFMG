@@ -13,6 +13,8 @@
 #define VELOCIDADE_ID 03
 #define CORRENTE_ID 04
 #define EQUIP_SIZE 4
+#define SENSOR_SIZE 4
+#define MAX_SENSOR 15
 
 typedef struct sensor
 {
@@ -53,6 +55,21 @@ typedef struct equipment
 
 int verify_existing_sensors(equipment *equipments, unsigned int n)
 {
+    int x = 0;
+    for (int i = 0; i < EQUIP_SIZE; i++)
+    {
+        for (int j = 0; j < SENSOR_SIZE; j++)
+        {
+            if (equipments[i].sensor_array[j].id != EMPTY_ID)
+            {
+                x++;
+                if (x == MAX_SENSOR)
+                {
+                    return -1;
+                }
+            }
+        }
+    }
     return 0;
 }
 
@@ -239,6 +256,9 @@ void handle_add(char aux[BUFSZ], equipment *equipments, unsigned int n)
         strncpy(sensors, buffer, strlen(buffer) - strlen(strrchr(buffer, 'i') - 1)); // sensors id that the client want to be added
         strcpy(equip, strrchr(buffer, '0'));                                         // equipments id that the client want to be added
         add(sensors, equip, aux, equipments, EQUIP_SIZE);                            // will add the sensors in its respectives equipments
+    }
+    else{
+        sprintf(aux, "limit exceeded");
     }
 }
 
