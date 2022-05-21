@@ -55,19 +55,18 @@ int main(int argc, char **argv)
 	while (1)
 	{
 		memset(buf, 0, BUFSZ);
-		printf("mensagem> ");
+	    printf("mensagem> ");
 		fgets(buf, BUFSZ - 1, stdin);
-
-		counts = send(s, buf, strlen(buf) - 1, 0);
-		if (counts != strlen(buf) - 1)
+		counts = send(s, buf, strlen(buf), 0);
+		if (counts != strlen(buf))
 		{
 			logexit("send");
 		}
 		memset(buf, 0, BUFSZ);
 		countr = recv(s, buf, BUFSZ - total, 0);
+		puts(buf);
 		total += countr; // total of bytes received during the communication
 		printf("received %ld bytes and %u bytes in total\n", countr, total);
-		puts(buf);
 		kill(buf, s);
 	}
 	close(s);

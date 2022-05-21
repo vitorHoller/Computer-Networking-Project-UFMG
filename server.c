@@ -21,17 +21,6 @@
 #define CORRENTE_ID 04
 #define EQUIP_SIZE 4
 
-// typedef struct sensor
-// {
-//     int id;
-// } sensor;
-
-// typedef struct equipment
-// {
-//     int id;
-//     sensor sensor_array[4];
-// } equipment;
-
 void usage(int argc, char **argv)
 {
     printf("usage: %s <v4|v6> <server port>\n", argv[0]);
@@ -39,7 +28,7 @@ void usage(int argc, char **argv)
     exit(EXIT_FAILURE);
 }
 
-int main(int argc, char **argv)
+int main(int argc, char **argv) // colocar o tratamento de '/0' e '/n' neste arquivo e nao no cliente, melhor a identacao, organizar algumas funcoes de meio de codigo, tipo a que mostra quantos bytes foram enviados, etc
 {
     equipment equipments[4];
     equipments[0].id = ESTEIRA_ID;
@@ -105,22 +94,26 @@ int main(int argc, char **argv)
     printf("[log] connection from %s\n", caddrstr);
     char buf[BUFSZ];
     memset(buf, 0, BUFSZ);
+    char aux[BUFSZ];
+	memset(aux, 0, BUFSZ);
     size_t countr = 0; // count bytes received
     size_t counts = 0; // count bytes sent
 
     while (1)
     {
         countr = recv(csock, buf, BUFSZ, 0);
+        strcpy(aux, buf);
+        strncpy(buf, aux, strlen(aux)-1); //eliminate '/0'
         printf("[msg] %s, %d bytes: %s\n", caddrstr, (int)countr, buf);
 
         handle_buffer(buf, equipments, EQUIP_SIZE); // verify which function the client wants to call (add, read, remove, list)
-        puts(buf);
+        kill(buf, s);
         counts = send(csock, buf, strlen(buf), 0);
         if (counts != strlen(buf))
         {
             logexit("send");
         }
-        kill(buf, s);
+        //kill(buf, s);
         memset(buf, 0, BUFSZ);
     }
     // close(csock);

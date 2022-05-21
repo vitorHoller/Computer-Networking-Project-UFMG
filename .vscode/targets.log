@@ -6,7 +6,7 @@ make all --print-data-base --no-builtin-variables --no-builtin-rules --question
 # This is free software: you are free to change and redistribute it.
 # There is NO WARRANTY, to the extent permitted by law.
 
-# Make data base, printed on Fri May 20 20:44:33 2022
+# Make data base, printed on Sat May 21 11:25:57 2022
 
 # Variables
 
@@ -49,7 +49,7 @@ SNAP_DATA = /var/snap/code/97
 # environment
 VSCODE_NLS_CONFIG = {"locale":"en-us","availableLanguages":{},"_languagePackSupport":true}
 # environment
-JOURNAL_STREAM = 8:51923
+JOURNAL_STREAM = 8:54759
 # environment
 XDG_CONFIG_DIRS = /etc/xdg/xdg-ubuntu:/etc/xdg
 # environment
@@ -83,7 +83,7 @@ LC_CTYPE = pt_BR.UTF-8
 # environment
 ROS_PACKAGE_PATH = /home/vitor/Documents/catkin_ws/src:/opt/ros/noetic/share
 # environment
-MANAGERPID = 2061
+MANAGERPID = 1846
 # environment
 ROS_PYTHON_VERSION = 3
 # environment
@@ -103,7 +103,7 @@ XDG_SESSION_DESKTOP = ubuntu
 # environment
 GPG_AGENT_INFO = /run/user/1000/gnupg/S.gpg-agent:0:1
 # environment
-SESSION_MANAGER = local/vitor-Aspire-A515-52G:@/tmp/.ICE-unix/2283,unix/vitor-Aspire-A515-52G:/tmp/.ICE-unix/2283
+SESSION_MANAGER = local/vitor-Aspire-A515-52G:@/tmp/.ICE-unix/2065,unix/vitor-Aspire-A515-52G:/tmp/.ICE-unix/2065
 # environment
 XDG_RUNTIME_DIR = /run/user/1000
 # environment
@@ -123,7 +123,7 @@ DISABLE_WAYLAND = 1
 # environment
 ELECTRON_RUN_AS_NODE = 1
 # environment
-INVOCATION_ID = 04ef013dfe1d417fb881faa6dc9587f1
+INVOCATION_ID = 87b9ddc151424c61a1038f4ecf5b67d6
 # environment
 GDK_PIXBUF_MODULEDIR = /snap/code/97/usr/lib/x86_64-linux-gnu/gdk-pixbuf-2.0/2.10.0/loaders
 # default
@@ -137,7 +137,7 @@ ROS_DISTRO = noetic
 # environment
 SSH_AUTH_SOCK = /run/user/1000/keyring/ssh
 # environment
-GIO_LAUNCHED_DESKTOP_FILE_PID = 5040
+GIO_LAUNCHED_DESKTOP_FILE_PID = 5149
 # automatic
 %F = $(notdir $%)
 # environment
@@ -151,7 +151,7 @@ PWD = /home/vitor/Documents/UFMG/Redes/Computer-Networking-Project-UFMG
 # default
 .LOADED := 
 # environment
-SSH_AGENT_PID = 2244
+SSH_AGENT_PID = 2027
 # environment
 PKG_CONFIG_PATH = /home/vitor/Documents/catkin_ws/devel/lib/pkgconfig:/opt/ros/noetic/lib/pkgconfig
 # environment
@@ -207,7 +207,7 @@ SHLVL = 0
 # environment
 GNOME_SHELL_SESSION_MODE = ubuntu
 # environment
-VSCODE_IPC_HOOK_EXTHOST = /run/user/1000/vscode-ipc-db42466d-b42e-468f-a18c-6ddc96c0d259.sock
+VSCODE_IPC_HOOK_EXTHOST = /run/user/1000/vscode-ipc-9fe8f3ae-3b98-4b2c-ab4a-835ed237d2db.sock
 # default
 MAKE_VERSION := 4.2.1
 # environment
@@ -278,7 +278,6 @@ LC_ALL = C
 GJS_DEBUG_TOPICS = JS ERROR;JS LOG
 # automatic
 ^F = $(notdir $^)
- 
 # default
 SUFFIXES := 
 # environment
@@ -289,6 +288,7 @@ CHROME_DESKTOP = code-url-handler.desktop
 WINDOWPATH = 2
 # default
 .INCLUDE_DIRS = /usr/include /usr/local/include /usr/include
+ 
 # environment
 GJS_DEBUG_OUTPUT = stderr
 # default
@@ -298,7 +298,7 @@ LC_ADDRESS = pt_BR.UTF-8
 # environment
 LANG = C
 # environment
-VSCODE_PID = 5103
+VSCODE_PID = 5200
 # variable set hash-table stats:
 # Load=144/1024=14%, Rehash=0, Collisions=26/172=15%
 
@@ -389,6 +389,6 @@ clean:
 # strcache performance: lookups = 31 / hit rate = 25%
 # hash-table stats:
 # Load=23/8192=0%, Rehash=0, Collisions=1/31=3%
-# Finished Make data base on Fri May 20 20:44:33 2022
+# Finished Make data base on Sat May 21 11:25:57 2022
 
  

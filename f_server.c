@@ -100,7 +100,7 @@ void add(char sensors[BUFSZ], char equip[BUFSZ], char aux[BUFSZ], equipment *equ
     case 5: // a string "01 02" has a length of 5
         max = 1;
         break;
-    case 2: // a string "014" has a length of 2
+    case 2: // a string "01" has a length of 2
         max = 0;
         break;
     }
@@ -342,7 +342,6 @@ void _read(char sensors[BUFSZ], char equip[BUFSZ], char aux[BUFSZ], equipment *e
 
     while (strlen(sensors) <= 11 && strlen(sensors) > 0)
     {
-        printf("entrou aqui 2\n");
         strcpy(sensor_buffer, strrchr(sensors, '0')); // copy the last two digits of sensors into sensor_buffer
         strcpy(equip_buffer, strrchr(equip, '0'));    // eliminate the substring " " in the first character of equip_buffer
         if (strlen(sensors) == 2)
@@ -542,6 +541,7 @@ void handle_buffer(char buf[BUFSZ], equipment *equipments, unsigned int n)
     else
     {
         memset(buf, 0, BUFSZ);
-        strncpy(buf, "kill", 4); // close the communication, it will call kill function in server.c and in client.c
+        strcpy(aux, "kill");
+        strncpy(buf, aux, strlen(aux)); // close the communication, it will call kill function in server.c and in client.c
     }
 }
