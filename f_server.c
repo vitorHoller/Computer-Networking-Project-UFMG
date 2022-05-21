@@ -276,7 +276,7 @@ void _remove(char sensors[BUFSZ], char equip[BUFSZ], char aux[BUFSZ], equipment 
 void list(char equip[BUFSZ], char aux[BUFSZ], equipment *equipments, unsigned int n)
 {
     int equip_id;
-    int sensor_id[SENSOR_SIZE] = {0,0,0,0};
+    int sensor_id[SENSOR_SIZE] = {0, 0, 0, 0};
     int j = 0;
     char *ptr[BUFSZ];
     *ptr = NULL;
@@ -314,9 +314,133 @@ void list(char equip[BUFSZ], char aux[BUFSZ], equipment *equipments, unsigned in
         sprintf(aux, "0%d", sensor_id[0]);
         return;
     }
-    else if(j == 0){
+    else if (j == 0)
+    {
         sprintf(aux, "none");
         return;
+    }
+}
+
+void _read(char sensors[BUFSZ], char equip[BUFSZ], char aux[BUFSZ], equipment *equipments, unsigned int n)
+{
+    char sensor_buffer[BUFSZ];
+    memset(sensor_buffer, 0, BUFSZ);
+    char equip_buffer[BUFSZ];
+    memset(equip_buffer, 0, BUFSZ);
+    char *ptr[BUFSZ];
+    *ptr = NULL;
+    char ptr_aux[BUFSZ];
+    memset(ptr_aux, 0, BUFSZ);
+    int sensor_id[4] = {0, 0, 0, 0};     // array that each sensor will be stored ("read sensor 01 03 02 in 01" -> sensor_id[0] = 01, sensor_id[1] = 03, sensor_id[2] = 02)
+    int equip_id;                        // store equipment id as int
+    int index;                           // help sensor_id[] to store properly
+    int int_aux_array[4] = {0, 0, 0, 0}; // auxiliar array to store not installed sensors
+    int exist = 0;                       // verify if the sensor is installed
+    int count_not_existing_sensor = -1;  // help int_aux_array[] to print not installed sensors
+    int count_existing_sensor = -1;      // help to print installed sensors
+    int sensor_not_listed = 0;           // confirms that a sensor is not installed
+
+    while (strlen(sensors) <= 11 && strlen(sensors) > 0)
+    {
+        printf("entrou aqui 2\n");
+        strcpy(sensor_buffer, strrchr(sensors, '0')); // copy the last two digits of sensors into sensor_buffer
+        strcpy(equip_buffer, strrchr(equip, '0'));    // eliminate the substring " " in the first character of equip_buffer
+        if (strlen(sensors) == 2)
+        {
+            strncpy(ptr_aux, sensors, strlen(sensors) - 2); // eliminate the two digits that have been already copied to sensor_buffer
+            index = 0;
+        }
+        else
+        {
+            strncpy(ptr_aux, sensors, strlen(sensors) - 3); // eliminate the two digits and the backspace that have been already copied to sensor_buffer
+            switch (strlen(sensors))                        // order the array position to be added in the database
+            {
+            case 11: // the last character, "04", of the string with lenght = 11, "01 02 03 04" will be added after "01" "02" "03"
+                index = 3;
+                break;
+            case 8: // the last character, "03", of the string with lenght = 11, "01 02 03" will be added after "01" "02"
+                index = 2;
+                break;
+            case 5: // the last character, "02", of the string with lenght = 11, "01 02" will be added after "01"
+                index = 1;
+                break;
+            }
+        }
+        strcpy(sensors, ptr_aux); // refresh the string sensor without the characters removed in line 14 lines above
+        memset(ptr_aux, 0, BUFSZ);
+
+        sensor_id[index] = strtol(sensor_buffer, ptr, 10); // convert sensor_buffer to integer
+        *ptr = NULL;
+        equip_id = strtol(equip_buffer, ptr, 10); // convert equip_buffer to integer
+        *ptr = NULL;
+    }
+    int_aux_array[0] = 0;
+    int_aux_array[1] = 0;
+    int_aux_array[2] = 0;
+    int_aux_array[3] = 0;
+    for (int i = 0; i < 4; i++)
+    {
+        for (int j = 0; j < SENSOR_SIZE; j++)
+        {
+            if (sensor_id[i] == equipments[equip_id - 1].sensor_array[j].id && sensor_id[i] != 0)
+            {
+                count_existing_sensor++;
+                exist = 1;
+            }
+        }
+        if (exist == 0 && sensor_id[i] != 0)
+        {
+            sensor_not_listed = 1;
+            count_not_existing_sensor++;
+            int_aux_array[count_not_existing_sensor] = sensor_id[i];
+        }
+        exist = 0;
+    }
+    if (sensor_not_listed == 1)
+    {
+        if (count_not_existing_sensor == 3) // print schema for not installed sensors
+        {
+            sprintf(aux, "sensor(s) 0%d 0%d 0%d 0%d not installed", int_aux_array[count_not_existing_sensor - 3], int_aux_array[count_not_existing_sensor - 2], int_aux_array[count_not_existing_sensor - 1], int_aux_array[count_not_existing_sensor]);
+            return;
+        }
+        else if (count_not_existing_sensor == 2)
+        {
+            sprintf(aux, "sensor(s) 0%d 0%d 0%d not installed", int_aux_array[count_not_existing_sensor - 2], int_aux_array[count_not_existing_sensor - 1], int_aux_array[count_not_existing_sensor]);
+            return;
+        }
+        else if (count_not_existing_sensor == 1)
+        {
+            sprintf(aux, "sensor(s) 0%d 0%d not installed", int_aux_array[count_not_existing_sensor - 1], int_aux_array[count_not_existing_sensor]);
+            return;
+        }
+        else if (count_not_existing_sensor == 0)
+        {
+            sprintf(aux, "sensor(s) 0%d not installed", int_aux_array[count_not_existing_sensor]);
+            return;
+        }
+    }
+    else
+    {
+        if (count_existing_sensor == 3) // print schema for each number of sensors that will be read (1, 2, 3 or 4)
+        {
+            sprintf(aux, "%.2f %.2f %.2f %.2f", ((float)rand() / (float)(RAND_MAX)) * 1.2, ((float)rand() / (float)(RAND_MAX)) * 3.5, ((float)rand() / (float)(RAND_MAX)) * 3.5, ((float)rand() / (float)(RAND_MAX)) * 3.5);
+            return;
+        }
+        else if (count_existing_sensor == 2)
+        {
+            sprintf(aux, "%.2f %.2f %.2f", ((float)rand() / (float)(RAND_MAX)) * 3.5, ((float)rand() / (float)(RAND_MAX)) * 3.5, ((float)rand() / (float)(RAND_MAX)) * 3.5);
+            return;
+        }
+        else if (count_existing_sensor == 1)
+        {
+            sprintf(aux, "%.2f %.2f", ((float)rand() / (float)(RAND_MAX)) * 3.5, ((float)rand() / (float)(RAND_MAX)) * 3.5);
+            return;
+        }
+        else if (count_existing_sensor == 0)
+        {
+            sprintf(aux, "%.2f", ((float)rand() / (float)(RAND_MAX)) * 3.5);
+            return;
+        }
     }
 }
 
@@ -369,6 +493,21 @@ void handle_list(char aux[BUFSZ], equipment *equipments, unsigned int n)
     list(equip, aux, equipments, EQUIP_SIZE);
 }
 
+void handle_read(char aux[BUFSZ], equipment *equipments, unsigned int n)
+{
+    char buffer[BUFSZ];
+    char sensors[BUFSZ];
+    char equip[BUFSZ];
+    memset(buffer, 0, BUFSZ);
+    memset(sensors, 0, BUFSZ);
+    memset(equip, 0, BUFSZ);
+
+    strcpy(buffer, aux);
+    strcpy(buffer, strchr(buffer, '0'));                                         // eliminate the substring "read " in the first character of buffer
+    strncpy(sensors, buffer, strlen(buffer) - strlen(strrchr(buffer, 'i') - 1)); // sensors id that the client want to read
+    strcpy(equip, strrchr(buffer, '0'));                                         // equipments id that the client want to read
+    _read(sensors, equip, aux, equipments, EQUIP_SIZE);                          // will read the sensors in its respectives equipments
+}
 
 void handle_buffer(char buf[BUFSZ], equipment *equipments, unsigned int n)
 {
@@ -390,13 +529,13 @@ void handle_buffer(char buf[BUFSZ], equipment *equipments, unsigned int n)
     }
     else if (strncmp("list", buf, 4) == 0)
     {                                             // if buf has a substring "list" in its first 3 characters
-       handle_list(aux, equipments, EQUIP_SIZE); // pass a _copy_ of buf to the function
+        handle_list(aux, equipments, EQUIP_SIZE); // pass a _copy_ of buf to the function
         memset(buf, 0, BUFSZ);
         strncpy(buf, aux, strlen(aux));
     }
     else if (strncmp("read", buf, 4) == 0)
-    { // if buf has a substring "read" in its first 3 characters
-        // read(aux); // pass a _copy_ of buf to the function
+    {                                             // if buf has a substring "read" in its first 3 characters
+        handle_read(aux, equipments, EQUIP_SIZE); // pass a _copy_ of buf to the function
         memset(buf, 0, BUFSZ);
         strncpy(buf, aux, strlen(aux));
     }

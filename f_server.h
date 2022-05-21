@@ -17,8 +17,10 @@ typedef struct equipment
 void add(char sensors[BUFSZ], char equip[BUFSZ], char aux[BUFSZ], equipment *equipments, unsigned int n);
 void _remove(char sensors[BUFSZ], char equip[BUFSZ], char aux[BUFSZ], equipment *equipments, unsigned int n);
 void list(char equip[BUFSZ], char aux[BUFSZ], equipment *equipments, unsigned int n);
+void _read(char sensors[BUFSZ], char equip[BUFSZ], char aux[BUFSZ], equipment *equipments, unsigned int n);
 
 void handle_add(char aux[BUFSZ], equipment *equipments, unsigned int n);
 void handle_remove(char aux[BUFSZ], equipment *equipments, unsigned int n);
 void handle_list(char aux[BUFSZ], equipment *equipments, unsigned int n);
+void handle_read(char aux[BUFSZ], equipment *equipments, unsigned int n);
 void handle_buffer(char buf[BUFSZ], equipment *equipment, unsigned int n);
